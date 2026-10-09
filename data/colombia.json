@@ -99,7 +99,11 @@
       "4 ciudades",
       "Margen de error 2,53%"
     ],
-    "imagen": null,
+    "imagen": {
+      "ruta": "/assets/colombia/habitos-usos-dinero-732b9753ebc3.webp",
+      "alt": "imagen",
+      "ajuste": "fit"
+    },
     "intro": "Conocer las rutas que los usuarios realizan con su dinero desde que lo reciben y cómo lo gastan.",
     "secciones": [
       {

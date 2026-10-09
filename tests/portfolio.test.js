@@ -80,17 +80,21 @@ test('las categorías vacías se ocultan en público y aparecen en edición', fu
   assert.deepEqual(core.visibleCategoryIndexes(studies, true), [0, 1, 2, 3]);
 });
 
-test('la sección de Colombia renderiza sus dos estudios y el mismo acceso al detalle', function () {
+test('la columna de Colombia renderiza sus dos estudios como details.study', function () {
   var colombia = readJson('data/colombia.json');
   assert.equal(colombia.length, 2);
   assert.equal(Object.prototype.hasOwnProperty.call(colombia[0], 'categoria'), false);
   var html = colombia.map(function (study, index) { return core.buildColombiaStudy(study, index, false); }).join('');
-  assert.match(html, /01/);
-  assert.match(html, /02/);
+  assert.equal((html.match(/<details class="study"/g) || []).length, 2);
+  assert.equal((html.match(/<summary>/g) || []).length, 2);
+  assert.equal((html.match(/<template class="detail">/g) || []).length, 2);
   assert.match(html, /Hábitos de uso del efectivo en Colombia/);
   assert.match(html, /Hábitos y usos del dinero en Colombia/);
+  assert.match(html, /<figure class="thumb/);
+  assert.match(html, /<div class="tags">/);
   assert.equal((html.match(/data-detail-label="Mercado de Colombia"/g) || []).length, 2);
   assert.equal((html.match(/data-open/g) || []).length, 2);
+  assert.doesNotMatch(html, /colombia-card/);
 });
 
 test('la sección de Colombia no se muestra vacía salvo durante la edición', function () {
@@ -115,15 +119,54 @@ test('crear, editar, reordenar y eliminar estudios de Colombia conserva un arreg
   assert.equal(removed.some(function (item) { return 'categoria' in item; }), false);
 });
 
-test('la página incluye el título, subtítulo, enlace y sección de Colombia solicitados', function () {
+test('Colombia está dentro de .cols y ya no existe como sección aparte', function () {
   var html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   assert.match(html, /<title>Propuesta BBVA · WPP Media<\/title>/);
-  assert.match(html, /Estos son los estudios que proponemos para BBVA\./);
+  assert.match(html, /Estos son los estudios que proponemos para BBVA y los que hemos hecho para el mercado colombiano\. Abre un estudio para ver su resumen o entra al detalle completo\./);
   assert.match(html, /href="#colombia">Colombia<\/a>/);
-  assert.match(html, /id="colombia"/);
-  assert.match(html, /Estudios hechos para el mercado de Colombia/);
-  assert.ok(html.indexOf('id="estudios"') < html.indexOf('id="colombia"'));
-  assert.ok(html.indexOf('id="colombia"') < html.indexOf('</main>'));
+  assert.match(html, /<div class="col" id="colombia" style="--c:#00DBEE" hidden>/);
+  assert.match(html, /Estudios hechos para el mercado colombiano/);
+  assert.match(html, /class="colombia-logo"[^>]+bbva-logo\.png/);
+  assert.doesNotMatch(html, /<section[^>]+id="colombia"/);
+  assert.doesNotMatch(html, /colombia-(?:card|grid|brand|image|add)/);
+
+  var columnsStart = html.indexOf('<div class="cols">');
+  var columnsEnd = html.indexOf('</div>\n  </section>', columnsStart);
+  var columns = html.slice(columnsStart, columnsEnd);
+  assert.ok(columns.indexOf('data-category="0"') < columns.indexOf('id="colombia"'));
+  assert.match(columns, /id="colombia"/);
+});
+
+test('la cuadrícula conserva cuatro columnas y las vacías no recentran las visibles', function () {
+  var html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
+  assert.match(html, /\.cols\{display:grid;grid-template-columns:repeat\(4,minmax\(0,1fr\)\);gap:20px;align-items:start\}/);
+  assert.match(html, /@media \(max-width:1100px\)\{\.cols\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\}/);
+  assert.match(html, /@media \(max-width:620px\)[\s\S]*?\.cols\{grid-template-columns:1fr\}/);
+  assert.match(html, /\.col\[hidden\]\{display:none\}/);
+  assert.doesNotMatch(html, /\.cols\.cols-[123]/);
+  assert.doesNotMatch(app, /cols-[1234]/);
+});
+
+test('el orden del detalle incluye los estudios de Colombia después de los estudios generales', function () {
+  var studies = readJson('data/estudios.json');
+  var colombia = readJson('data/colombia.json');
+  var html = studies.map(function (study) { return core.buildStudy(study, false); }).join('') +
+    colombia.map(function (study, index) { return core.buildColombiaStudy(study, index, false); }).join('');
+  var detailedIds = [];
+  var matcher = /<details class="study"[^>]+id="([^"]+)"[^>]+data-has-detail="true"/g;
+  var match;
+  while ((match = matcher.exec(html))) detailedIds.push(match[1]);
+  assert.deepEqual(detailedIds, [
+    'estudio-lift',
+    'estudio-preview-starview',
+    'colombia-estudio-habitos-efectivo',
+    'colombia-estudio-habitos-usos-dinero'
+  ]);
+
+  var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
+  assert.match(app, /querySelectorAll\('\[data-detail-study\]\[data-has-detail="true"\]'\)/);
+  assert.match(app, /activeDetail = \(index \+ studies\.length\) % studies\.length/);
 });
 
 test('la validación acepta colombia.json y rechaza categoría o rutas de otra colección', function () {

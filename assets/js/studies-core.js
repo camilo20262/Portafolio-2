@@ -124,18 +124,19 @@
 
   function buildColombiaStudy(study, index, editing) {
     var detailed = hasDetail(study);
-    var html = '<article class="colombia-card" id="colombia-estudio-' + esc(study.id) + '" data-detail-study data-detail-label="Mercado de Colombia" data-has-detail="' + detailed + '">';
+    var html = '<details class="study" name="colombia" id="colombia-estudio-' + esc(study.id) + '" data-detail-study data-detail-label="Mercado de Colombia" data-has-detail="' + detailed + '">';
+    html += '<summary><h4>' + esc(study.nombre) + '</h4><p class="tagline">' + esc(study.frase) + '</p></summary>';
+    html += '<div class="body">';
     if (study.imagen) {
-      html += '<figure class="colombia-image' + (study.imagen.ajuste === 'fit' ? ' fit' : '') + '"><img src="' + esc(study.imagen.ruta) + '" alt="' + esc(study.imagen.alt) + '"></figure>';
-    } else {
-      html += '<div class="colombia-image art" aria-hidden="true"><span>' + esc(study.nombre) + '</span></div>';
+      html += '<figure class="thumb' + (study.imagen.ajuste === 'fit' ? ' fit' : '') + '"><img src="' + esc(study.imagen.ruta) + '" alt="' + esc(study.imagen.alt) + '"></figure>';
     }
-    html += '<div class="colombia-card-body"><span class="colombia-number">' + String(index + 1).padStart(2, '0') + '</span>';
-    html += '<h3>' + esc(study.nombre) + '</h3><p class="tagline">' + esc(study.frase) + '</p>';
+    (study.puntos || []).forEach(function (point) {
+      html += '<p>' + richText(point) + '</p>';
+    });
     html += buildTags(study);
     if (detailed) html += '<button class="btn" type="button" data-open>Ver detalle completo</button>';
     if (editing) html += buildAdmin(study, 'colombia');
-    html += '</div>' + buildDetail(study) + '</article>';
+    html += '</div>' + buildDetail(study) + '</details>';
     return html;
   }
 

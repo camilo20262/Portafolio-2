@@ -4,12 +4,11 @@
   var core = window.StudiesCore;
   if (!core) return;
 
-  var categoryLists = Array.prototype.slice.call(document.querySelectorAll('#estudios .col .list'));
-  var categoryColumns = Array.prototype.slice.call(document.querySelectorAll('#estudios .col'));
+  var categoryColumns = Array.prototype.slice.call(document.querySelectorAll('#estudios .col[data-category]'));
+  var categoryLists = categoryColumns.map(function (column) { return column.querySelector('.list'); });
   var columnsGrid = document.querySelector('#estudios .cols');
-  var colombiaSection = document.getElementById('colombia');
-  var colombiaGrid = document.getElementById('colombia-grid');
-  var colombiaAdd = document.getElementById('colombia-add');
+  var colombiaColumn = document.getElementById('colombia');
+  var colombiaList = colombiaColumn.querySelector('.list');
   var colombiaNav = document.querySelector('.nav a[href="#colombia"]');
   var detail = document.getElementById('detail');
   var loginDialog = document.getElementById('login-dialog');
@@ -79,14 +78,14 @@
       if (editing) list.insertAdjacentHTML('beforeend', '<button class="add-study" type="button" data-add="' + category + '" data-scope="studies">+ Agregar estudio</button>');
       categoryColumns[category].hidden = visibleCategories.indexOf(category) === -1;
     });
-    columnsGrid.className = 'cols cols-' + visibleCategories.length;
-    colombiaGrid.innerHTML = colombiaState.map(function (study, index) {
+    columnsGrid.className = 'cols';
+    colombiaList.innerHTML = colombiaState.map(function (study, index) {
       return core.buildColombiaStudy(study, index, editing);
     }).join('');
+    if (editing) colombiaList.insertAdjacentHTML('beforeend', '<button class="add-study" type="button" data-add="" data-scope="colombia">+ Agregar estudio</button>');
     var showColombia = core.shouldShowColombia(colombiaState, editing);
-    colombiaSection.hidden = !showColombia;
+    colombiaColumn.hidden = !showColombia;
     colombiaNav.hidden = !showColombia;
-    colombiaAdd.hidden = !editing;
     var count = document.querySelector('#inicio .cover-stats > div:last-child b');
     if (count) count.textContent = String(state.length);
   }
@@ -110,7 +109,7 @@
     detail.querySelector('.d-tag').textContent = study.querySelector('.tagline').textContent;
     media.replaceChildren();
     media.style.backgroundImage = '';
-    var source = study.querySelector('.thumb img, .colombia-image img');
+    var source = study.querySelector('.thumb img');
     if (source) {
       media.classList.remove('art');
       var image = document.createElement('img');

@@ -149,7 +149,11 @@
     "puntos": [],
     "tiempos": [],
     "etiquetas": [],
-    "imagen": null,
+    "imagen": {
+      "ruta": "/assets/estudios/mmm-4b814e245090.webp",
+      "alt": "imagen",
+      "ajuste": "fit"
+    },
     "intro": "Para aislar el impacto de cada variable, analizamos simultáneamente todos los factores internos y externos que influyen en las ventas finales de la marca.",
     "secciones": [
       {

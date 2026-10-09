@@ -100,9 +100,9 @@
       "Margen de error 2,53%"
     ],
     "imagen": {
-      "ruta": "/assets/colombia/habitos-usos-dinero-732b9753ebc3.webp",
-      "alt": "imagen",
-      "ajuste": "fit"
+      "ruta": "/assets/colombia/habitos-usos-dinero.webp",
+      "alt": "Mano sosteniendo tarjetas frente a una visualización de datos financieros",
+      "ajuste": "cover"
     },
     "intro": "Conocer las rutas que los usuarios realizan con su dinero desde que lo reciben y cómo lo gastan.",
     "secciones": [

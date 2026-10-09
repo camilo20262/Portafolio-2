@@ -68,6 +68,17 @@
     try { history.replaceState(null, '', value); } catch (error) {}
   }
 
+  function applyImageOrientations() {
+    Array.prototype.forEach.call(document.querySelectorAll('.thumb img'), function (image) {
+      function updateOrientation() {
+        var thumb = image.closest('.thumb');
+        if (thumb) thumb.classList.toggle('portrait', image.naturalHeight > image.naturalWidth);
+      }
+      if (image.complete) updateOrientation();
+      else image.addEventListener('load', updateOrientation);
+    });
+  }
+
   function render() {
     var visibleCategories = core.visibleCategoryIndexes(state, editing);
     categoryLists.forEach(function (list, category) {
@@ -84,6 +95,7 @@
     colombiaColumn.hidden = !showColombia;
     var count = document.querySelector('#inicio .cover-stats > div:last-child b');
     if (count) count.textContent = String(state.length);
+    applyImageOrientations();
   }
 
   function studiesInDom() {

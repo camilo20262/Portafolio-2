@@ -86,7 +86,9 @@ test('la columna de Colombia renderiza sus dos estudios como details.study', fun
   assert.equal((html.match(/<template class="detail">/g) || []).length, 2);
   assert.match(html, /Hábitos de uso del efectivo en Colombia/);
   assert.match(html, /Hábitos y usos del dinero en Colombia/);
-  assert.match(html, /<figure class="thumb/);
+  assert.equal((html.match(/<figure class="thumb/g) || []).length, 2);
+  assert.equal(colombia[1].imagen.ruta, '/assets/colombia/habitos-usos-dinero.webp');
+  assert.match(colombia[1].imagen.alt, /visualización de datos financieros/);
   assert.match(html, /<div class="tags">/);
   assert.equal((html.match(/data-detail-label="Mercado de Colombia"/g) || []).length, 2);
   assert.equal((html.match(/data-open/g) || []).length, 2);
@@ -161,6 +163,15 @@ test('la cuadrícula conserva cuatro columnas y las vacías no recentran las vis
   assert.match(html, /\.col\[hidden\]\{display:none\}/);
   assert.doesNotMatch(html, /\.cols\.cols-[123]/);
   assert.doesNotMatch(app, /cols-[1234]/);
+});
+
+test('las fotografías verticales conservan su proporción en las tarjetas', function () {
+  var html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
+  assert.match(html, /\.thumb\.portrait\{aspect-ratio:auto\}/);
+  assert.match(html, /\.thumb\.portrait img\{height:auto;object-fit:contain\}/);
+  assert.match(app, /image\.naturalHeight > image\.naturalWidth/);
+  assert.match(app, /applyImageOrientations\(\)/);
 });
 
 test('el orden del detalle incluye los estudios de Colombia después de los estudios generales', function () {

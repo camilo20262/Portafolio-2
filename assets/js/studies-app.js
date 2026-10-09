@@ -5,20 +5,28 @@
   if (!core) return;
 
   var categoryLists = Array.prototype.slice.call(document.querySelectorAll('#estudios .col .list'));
+  var categoryColumns = Array.prototype.slice.call(document.querySelectorAll('#estudios .col'));
+  var columnsGrid = document.querySelector('#estudios .cols');
+  var colombiaSection = document.getElementById('colombia');
+  var colombiaGrid = document.getElementById('colombia-grid');
+  var colombiaAdd = document.getElementById('colombia-add');
+  var colombiaNav = document.querySelector('.nav a[href="#colombia"]');
   var detail = document.getElementById('detail');
   var loginDialog = document.getElementById('login-dialog');
   var studyDialog = document.getElementById('study-dialog');
   var editorBar = document.getElementById('editor-bar');
   var statusEl = document.getElementById('editor-status');
   var state = [];
+  var colombiaState = [];
   var baseSha = '';
   var editing = false;
   var dirty = false;
   var publishing = false;
   var activeDetail = 0;
   var lastFocus = null;
-  var pendingImages = Object.create(null);
+  var pendingImages = { studies: Object.create(null), colombia: Object.create(null) };
   var formImage = null;
+  var formScope = 'studies';
   var imageProcessing = false;
   var slugTouched = false;
 
@@ -64,17 +72,27 @@
   }
 
   function render() {
+    var visibleCategories = core.visibleCategoryIndexes(state, editing);
     categoryLists.forEach(function (list, category) {
       var items = state.filter(function (study) { return study.categoria === category; });
       list.innerHTML = items.map(function (study) { return core.buildStudy(study, editing); }).join('');
-      if (editing) list.insertAdjacentHTML('beforeend', '<button class="add-study" type="button" data-add="' + category + '">+ Agregar estudio</button>');
+      if (editing) list.insertAdjacentHTML('beforeend', '<button class="add-study" type="button" data-add="' + category + '" data-scope="studies">+ Agregar estudio</button>');
+      categoryColumns[category].hidden = visibleCategories.indexOf(category) === -1;
     });
+    columnsGrid.className = 'cols cols-' + visibleCategories.length;
+    colombiaGrid.innerHTML = colombiaState.map(function (study, index) {
+      return core.buildColombiaStudy(study, index, editing);
+    }).join('');
+    var showColombia = core.shouldShowColombia(colombiaState, editing);
+    colombiaSection.hidden = !showColombia;
+    colombiaNav.hidden = !showColombia;
+    colombiaAdd.hidden = !editing;
     var count = document.querySelector('#inicio .cover-stats > div:last-child b');
     if (count) count.textContent = String(state.length);
   }
 
   function studiesInDom() {
-    return Array.prototype.slice.call(document.querySelectorAll('details.study'));
+    return Array.prototype.slice.call(document.querySelectorAll('[data-detail-study][data-has-detail="true"]'));
   }
 
   function openStudy(index) {
@@ -82,16 +100,17 @@
     if (!detail || !studies.length) return;
     activeDetail = (index + studies.length) % studies.length;
     var study = studies[activeDetail];
-    var head = study.closest('.col').querySelector('.colhead');
-    var title = study.querySelector('h4').textContent;
+    var column = study.closest('.col');
+    var head = column && column.querySelector('.colhead');
+    var title = study.querySelector('h4, h3').textContent;
     var media = detail.querySelector('.d-media');
     var content = detail.querySelector('.d-content');
-    detail.querySelector('.d-cat').textContent = head.querySelector('h3').textContent;
+    detail.querySelector('.d-cat').textContent = study.getAttribute('data-detail-label') || '';
     detail.querySelector('#d-title').textContent = title;
     detail.querySelector('.d-tag').textContent = study.querySelector('.tagline').textContent;
     media.replaceChildren();
     media.style.backgroundImage = '';
-    var source = study.querySelector('.thumb img');
+    var source = study.querySelector('.thumb img, .colombia-image img');
     if (source) {
       media.classList.remove('art');
       var image = document.createElement('img');
@@ -100,7 +119,7 @@
       media.appendChild(image);
     } else {
       media.classList.add('art');
-      media.style.backgroundImage = getComputedStyle(head).backgroundImage;
+      media.style.backgroundImage = head ? getComputedStyle(head).backgroundImage : 'linear-gradient(to top right,#93DFE3 0%,#83BFF7 50%,#5465FF 100%)';
       var label = document.createElement('span');
       label.textContent = title;
       media.appendChild(label);
@@ -115,17 +134,18 @@
     }
     detail.querySelector('.d-body').scrollTop = 0;
     detail.querySelector('.d-wrap').scrollTop = 0;
+    detail.dataset.returnHash = study.closest('#colombia') ? '#colombia' : '#estudios';
     setHash('#' + study.id);
   }
 
   function openHashStudy() {
     var hash = location.hash.slice(1);
-    if (hash.indexOf('estudio-') !== 0) return;
-    var target = document.getElementById(hash);
+    var target = document.getElementById(hash) || document.getElementById('estudio-' + hash) || document.getElementById('colombia-estudio-' + hash);
+    if (!target || target.getAttribute('data-has-detail') !== 'true') return;
     var studies = studiesInDom();
     var index = studies.indexOf(target);
     if (index > -1) {
-      target.open = true;
+      if (target.tagName === 'DETAILS') target.open = true;
       setTimeout(function () { openStudy(index); }, 150);
     }
   }
@@ -200,20 +220,26 @@
     preview.hidden = false;
   }
 
-  function emptyStudy(category) {
-    return {
-      id: '', categoria: category, nombre: '', frase: '', puntos: [], tiempos: [], etiquetas: [],
+  function emptyStudy(category, scope) {
+    var study = {
+      id: '', nombre: '', frase: '', puntos: [], tiempos: [], etiquetas: [],
       imagen: null, intro: '', secciones: [], cronograma: [], datos: []
     };
+    if (scope !== 'colombia') study.categoria = category;
+    return study;
   }
 
-  function openForm(study, isNew) {
+  function openForm(study, isNew, scope) {
     var item = JSON.parse(JSON.stringify(study));
+    formScope = scope || 'studies';
     if (formImage) URL.revokeObjectURL(formImage.url);
-    document.getElementById('study-form-title').textContent = isNew ? 'Agregar estudio' : 'Editar estudio';
+    document.getElementById('study-form-title').textContent = (isNew ? 'Agregar estudio' : 'Editar estudio') + (formScope === 'colombia' ? ' de Colombia' : '');
     document.getElementById('study-original-id').value = isNew ? '' : item.id;
     document.getElementById('study-id').value = item.id;
-    document.getElementById('study-category').value = String(item.categoria);
+    var categoryField = document.getElementById('study-category-field');
+    categoryField.hidden = formScope === 'colombia';
+    document.getElementById('study-category').required = formScope !== 'colombia';
+    if (formScope !== 'colombia') document.getElementById('study-category').value = String(item.categoria);
     document.getElementById('study-name').value = item.nombre;
     document.getElementById('study-tagline').value = item.frase;
     document.getElementById('study-point-1').value = item.puntos[0] || '';
@@ -290,7 +316,8 @@
 
   function collectFormStudy() {
     var originalId = document.getElementById('study-original-id').value;
-    var existing = state.find(function (item) { return item.id === originalId; });
+    var currentState = formScope === 'colombia' ? colombiaState : state;
+    var existing = currentState.find(function (item) { return item.id === originalId; });
     var removeImage = document.getElementById('study-image-remove').checked;
     var image = existing && existing.imagen ? JSON.parse(JSON.stringify(existing.imagen)) : null;
     if (removeImage) image = null;
@@ -303,9 +330,8 @@
       image.alt = document.getElementById('study-image-alt').value.trim();
       image.ajuste = document.getElementById('study-image-fit').value;
     }
-    return {
+    var study = {
       id: document.getElementById('study-id').value.trim(),
-      categoria: Number(document.getElementById('study-category').value),
       nombre: document.getElementById('study-name').value.trim(),
       frase: document.getElementById('study-tagline').value.trim(),
       puntos: [document.getElementById('study-point-1').value.trim(), document.getElementById('study-point-2').value.trim()].filter(Boolean),
@@ -317,6 +343,8 @@
       cronograma: readPairs('.timeline-row', 'duracion', 'actividad'),
       datos: readPairs('.fact-row', 'nombre', 'valor')
     };
+    if (formScope !== 'colombia') study.categoria = Number(document.getElementById('study-category').value);
+    return study;
   }
 
   function validateClientStudy(study) {
@@ -325,10 +353,10 @@
     if (study.imagen && !study.imagen.alt) throw new Error('Agrega un texto alternativo para la imagen.');
   }
 
-  function uploadImage(id, pending) {
+  function uploadImage(id, pending, scope) {
     return fetch('/api/upload', {
       method: 'POST', credentials: 'same-origin',
-      headers: { 'Content-Type': 'image/webp', 'X-Study-Id': id },
+      headers: { 'Content-Type': 'image/webp', 'X-Study-Id': id, 'X-Study-Scope': scope },
       body: pending.blob
     }).then(function (response) {
       return response.json().catch(function () { return {}; }).then(function (data) {
@@ -350,25 +378,34 @@
     button.textContent = 'Guardando…';
     setStatus('Subiendo cambios…', 'clean');
     var payload = JSON.parse(JSON.stringify(state));
+    var colombiaPayload = JSON.parse(JSON.stringify(colombiaState));
     var uploads = [];
-    var imageIds = Object.keys(pendingImages).filter(function (id) {
-      return payload.some(function (study) { return study.id === id && study.imagen; });
+    var imageQueue = [];
+    ['studies', 'colombia'].forEach(function (scope) {
+      var collection = scope === 'colombia' ? colombiaPayload : payload;
+      Object.keys(pendingImages[scope]).forEach(function (id) {
+        if (collection.some(function (study) { return study.id === id && study.imagen; })) imageQueue.push({ id: id, scope: scope });
+      });
     });
-    imageIds.reduce(function (chain, id) {
+    imageQueue.reduce(function (chain, item) {
       return chain.then(function () {
-        return uploadImage(id, pendingImages[id]).then(function (uploaded) {
-          var study = payload.find(function (item) { return item.id === id; });
+        return uploadImage(item.id, pendingImages[item.scope][item.id], item.scope).then(function (uploaded) {
+          var collection = item.scope === 'colombia' ? colombiaPayload : payload;
+          var study = collection.find(function (entry) { return entry.id === item.id; });
           study.imagen.ruta = uploaded.path;
-          uploads.push({ id: id, token: uploaded.token });
+          uploads.push({ id: item.id, scope: item.scope, token: uploaded.token });
         });
       });
     }, Promise.resolve()).then(function () {
       setStatus('Creando publicación…', 'clean');
-      return request('/api/save', jsonOptions('POST', { studies: payload, uploads: uploads, baseSha: baseSha }));
+      return request('/api/save', jsonOptions('POST', { studies: payload, colombia: colombiaPayload, uploads: uploads, baseSha: baseSha }));
     }).then(function (result) {
-      Object.keys(pendingImages).forEach(function (id) { URL.revokeObjectURL(pendingImages[id].url); });
-      pendingImages = Object.create(null);
+      ['studies', 'colombia'].forEach(function (scope) {
+        Object.keys(pendingImages[scope]).forEach(function (id) { URL.revokeObjectURL(pendingImages[scope][id].url); });
+      });
+      pendingImages = { studies: Object.create(null), colombia: Object.create(null) };
       state = payload;
+      colombiaState = colombiaPayload;
       baseSha = result.sha;
       dirty = false;
       render();
@@ -388,30 +425,43 @@
     var open = event.target.closest('[data-open]');
     if (open) {
       event.preventDefault();
-      openStudy(studiesInDom().indexOf(open.closest('details.study')));
+      openStudy(studiesInDom().indexOf(open.closest('[data-detail-study]')));
       return;
     }
     var step = event.target.closest('[data-step]');
     if (step && detail.open) { openStudy(activeDetail + Number(step.getAttribute('data-step'))); return; }
     var add = event.target.closest('[data-add]');
-    if (add && editing) { openForm(emptyStudy(Number(add.getAttribute('data-add'))), true); return; }
+    if (add && editing) {
+      var addScope = add.getAttribute('data-scope') || 'studies';
+      openForm(emptyStudy(Number(add.getAttribute('data-add')), addScope), true, addScope);
+      return;
+    }
     var edit = event.target.closest('[data-edit]');
     if (edit && editing) {
-      var item = state.find(function (study) { return study.id === edit.getAttribute('data-edit'); });
-      if (item) openForm(item, false);
+      var editScope = edit.getAttribute('data-scope') || 'studies';
+      var editState = editScope === 'colombia' ? colombiaState : state;
+      var item = editState.find(function (study) { return study.id === edit.getAttribute('data-edit'); });
+      if (item) openForm(item, false, editScope);
       return;
     }
     var move = event.target.closest('[data-move]');
     if (move && editing) {
-      state = core.moveStudy(state, move.getAttribute('data-id'), Number(move.getAttribute('data-move')));
+      var moveScope = move.getAttribute('data-scope') || 'studies';
+      if (moveScope === 'colombia') colombiaState = core.moveStudy(colombiaState, move.getAttribute('data-id'), Number(move.getAttribute('data-move')));
+      else state = core.moveStudy(state, move.getAttribute('data-id'), Number(move.getAttribute('data-move')));
       setDirty(true); render(); return;
     }
     var remove = event.target.closest('[data-delete]');
     if (remove && editing) {
       var removeId = remove.getAttribute('data-delete');
+      var removeScope = remove.getAttribute('data-scope') || 'studies';
       if (window.confirm('¿Eliminar este estudio? El cambio no se publicará hasta guardar.')) {
-        state = core.deleteStudy(state, removeId);
-        if (pendingImages[removeId]) { URL.revokeObjectURL(pendingImages[removeId].url); delete pendingImages[removeId]; }
+        if (removeScope === 'colombia') colombiaState = core.deleteStudy(colombiaState, removeId);
+        else state = core.deleteStudy(state, removeId);
+        if (pendingImages[removeScope][removeId]) {
+          URL.revokeObjectURL(pendingImages[removeScope][removeId].url);
+          delete pendingImages[removeScope][removeId];
+        }
         setDirty(true); render();
       }
       return;
@@ -432,9 +482,9 @@
   detail.querySelector('.d-close').addEventListener('click', function () { detail.close(); });
   detail.addEventListener('click', function (event) { if (event.target === detail) detail.close(); });
   detail.addEventListener('close', function () {
-    setHash('#estudios');
+    setHash(detail.dataset.returnHash || '#estudios');
     var current = studiesInDom()[activeDetail];
-    if (current && !current.open) current.open = true;
+    if (current && current.tagName === 'DETAILS' && !current.open) current.open = true;
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   });
   detail.addEventListener('keydown', function (event) {
@@ -495,16 +545,21 @@
       var originalId = document.getElementById('study-original-id').value;
       var study = collectFormStudy();
       validateClientStudy(study);
-      state = originalId ? core.updateStudy(state, originalId, study) : core.createStudy(state, study);
-      if (originalId && originalId !== study.id && pendingImages[originalId]) {
-        pendingImages[study.id] = pendingImages[originalId]; delete pendingImages[originalId];
+      var currentState = formScope === 'colombia' ? colombiaState : state;
+      currentState = originalId ? core.updateStudy(currentState, originalId, study) : core.createStudy(currentState, study);
+      if (formScope === 'colombia') colombiaState = currentState;
+      else state = currentState;
+      if (originalId && originalId !== study.id && pendingImages[formScope][originalId]) {
+        pendingImages[formScope][study.id] = pendingImages[formScope][originalId];
+        delete pendingImages[formScope][originalId];
       }
-      if (document.getElementById('study-image-remove').checked && pendingImages[study.id]) {
-        URL.revokeObjectURL(pendingImages[study.id].url); delete pendingImages[study.id];
+      if (document.getElementById('study-image-remove').checked && pendingImages[formScope][study.id]) {
+        URL.revokeObjectURL(pendingImages[formScope][study.id].url);
+        delete pendingImages[formScope][study.id];
       }
       if (formImage) {
-        if (pendingImages[study.id]) URL.revokeObjectURL(pendingImages[study.id].url);
-        pendingImages[study.id] = formImage;
+        if (pendingImages[formScope][study.id]) URL.revokeObjectURL(pendingImages[formScope][study.id].url);
+        pendingImages[formScope][study.id] = formImage;
         formImage = null;
       }
       studyDialog.close();
@@ -528,8 +583,12 @@
     event.returnValue = '';
   });
 
-  request('/data/estudios.json', { cache: 'no-store' }).then(function (studies) {
-    state = studies;
+  Promise.all([
+    request('/data/estudios.json', { cache: 'no-store' }),
+    request('/data/colombia.json', { cache: 'no-store' })
+  ]).then(function (collections) {
+    state = collections[0];
+    colombiaState = collections[1];
     render();
     openHashStudy();
     if (location.hash === '#editar') requestEditor();

@@ -21,20 +21,26 @@ function textArray(value, label, count, length) {
   return array(value, label, count).map(function (item, index) { return text(item, label + ' ' + (index + 1), length, true); });
 }
 
-function validateStudies(input) {
+function validateCollection(input, options) {
   var ids = new Set();
-  return array(input, 'estudios', 100).map(function (study, index) {
+  var label = options.label;
+  var routePattern = new RegExp('^/assets/' + options.imageDirectory + '/[a-z0-9-]+\\.(webp|png|jpe?g)$');
+  return array(input, label, 100).map(function (study, index) {
     if (!study || typeof study !== 'object' || Array.isArray(study)) invalid('El estudio ' + (index + 1) + ' no es válido.');
     var id = text(study.id, 'ID', 80, true);
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) invalid('El ID ' + id + ' no es válido.');
     if (ids.has(id)) invalid('El ID ' + id + ' está repetido.');
     ids.add(id);
-    if (!Number.isInteger(study.categoria) || study.categoria < 0 || study.categoria > 3) invalid('La categoría de ' + id + ' no es válida.');
+    if (options.hasCategory) {
+      if (!Number.isInteger(study.categoria) || study.categoria < 0 || study.categoria > 3) invalid('La categoría de ' + id + ' no es válida.');
+    } else if (Object.prototype.hasOwnProperty.call(study, 'categoria')) {
+      invalid('El estudio de Colombia ' + id + ' no debe incluir categoría.');
+    }
     var image = null;
     if (study.imagen !== null) {
       if (!study.imagen || typeof study.imagen !== 'object' || Array.isArray(study.imagen)) invalid('La imagen de ' + id + ' no es válida.');
       var route = text(study.imagen.ruta, 'Ruta de imagen', 240, true);
-      if (!/^\/assets\/estudios\/[a-z0-9-]+\.(webp|png|jpe?g)$/.test(route)) invalid('La ruta de imagen de ' + id + ' no es válida.');
+      if (!routePattern.test(route)) invalid('La ruta de imagen de ' + id + ' no es válida.');
       if (study.imagen.ajuste !== 'fit' && study.imagen.ajuste !== 'cover') invalid('El ajuste de imagen de ' + id + ' no es válido.');
       image = { ruta: route, alt: text(study.imagen.alt, 'Texto alternativo', 250, true), ajuste: study.imagen.ajuste };
     }
@@ -54,21 +60,28 @@ function validateStudies(input) {
     var facts = array(study.datos, 'datos', 20).map(function (item) {
       return { nombre: text(item.nombre, 'Nombre de dato', 100, true), valor: text(item.valor, 'Valor de dato', 200, true) };
     });
-    return {
-      id: id,
-      categoria: study.categoria,
-      nombre: text(study.nombre, 'Nombre', 120, true),
-      frase: text(study.frase, 'Frase', 300, true),
-      puntos: textArray(study.puntos, 'Punto', 2, 500),
-      tiempos: textArray(study.tiempos, 'Tiempo', 20, 120),
-      etiquetas: textArray(study.etiquetas, 'Etiqueta', 20, 120),
-      imagen: image,
-      intro: text(study.intro, 'Introducción', 2000, false),
-      secciones: sections,
-      cronograma: timeline,
-      datos: facts
-    };
+    var normalized = { id: id };
+    if (options.hasCategory) normalized.categoria = study.categoria;
+    normalized.nombre = text(study.nombre, 'Nombre', 120, true);
+    normalized.frase = text(study.frase, 'Frase', 300, true);
+    normalized.puntos = textArray(study.puntos, 'Punto', 2, 500);
+    normalized.tiempos = textArray(study.tiempos, 'Tiempo', 20, 120);
+    normalized.etiquetas = textArray(study.etiquetas, 'Etiqueta', 20, 120);
+    normalized.imagen = image;
+    normalized.intro = text(study.intro, 'Introducción', 2000, false);
+    normalized.secciones = sections;
+    normalized.cronograma = timeline;
+    normalized.datos = facts;
+    return normalized;
   });
+}
+
+function validateStudies(input) {
+  return validateCollection(input, { label: 'estudios', imageDirectory: 'estudios', hasCategory: true });
+}
+
+function validateColombia(input) {
+  return validateCollection(input, { label: 'estudios de Colombia', imageDirectory: 'colombia', hasCategory: false });
 }
 
 function validateImageBytes(buffer) {
@@ -80,4 +93,9 @@ function validateImageBytes(buffer) {
   invalid('El archivo no es una imagen WebP, PNG o JPEG real.');
 }
 
-module.exports = { MAX_IMAGE: MAX_IMAGE, validateStudies: validateStudies, validateImageBytes: validateImageBytes };
+module.exports = {
+  MAX_IMAGE: MAX_IMAGE,
+  validateStudies: validateStudies,
+  validateColombia: validateColombia,
+  validateImageBytes: validateImageBytes
+};

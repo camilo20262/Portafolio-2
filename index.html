@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Portafolio Comercial BI · WPP Media</title>
+<title>Propuesta BBVA · WPP Media</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -140,7 +140,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 .sthead h2{font-size:clamp(32px,4.4vw,52px);font-weight:800}
 .sthead p{color:#C9CFF5;max-width:58ch;margin-top:12px;font-size:17px}
 .cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;align-items:start}
+.cols.cols-1{grid-template-columns:minmax(280px,420px);justify-content:center}
+.cols.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cols.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .col{border-radius:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);overflow:hidden}
+.col[hidden],#colombia[hidden]{display:none}
 .colhead{padding:24px 20px 20px;color:#000050;background-color:#93DFE3;background-image:linear-gradient(to top right,#93DFE3 0%,#83BFF7 50%,#5465FF 100%);min-height:156px;display:flex;flex-direction:column;justify-content:flex-end}
 .colhead h3{font-size:21px;font-weight:800}
 .colhead p{font-size:14px;margin-top:6px;font-weight:500;color:#1D2563}
@@ -168,6 +172,28 @@ details.study[open] .tagline{color:#4A5278}
 .btn{margin-top:14px;display:inline-flex;align-items:center;font:inherit;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;border:0;cursor:pointer;background:#000050;color:#fff;transition:background .2s}
 .btn:hover{background:#5465FF}
 template{display:none}
+
+/* ===== Estudios para Colombia ===== */
+.colombia{background:var(--bg)}
+.colombia-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-bottom:36px}
+.colombia-head-copy{max-width:760px}
+.colombia-head .kicker{margin-bottom:12px}
+.colombia-head h2{max-width:22ch}
+.colombia-brand{flex:0 0 auto;display:grid;place-items:center;width:190px;min-height:82px;padding:18px 22px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:0 12px 32px rgba(0,0,80,.08)}
+.colombia-brand img{width:100%;height:auto}
+.colombia-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.colombia-card{overflow:hidden;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,80,.08)}
+.colombia-image{aspect-ratio:16/9;background:linear-gradient(to top right,#93DFE3 0%,#83BFF7 50%,#5465FF 100%);overflow:hidden;display:grid;place-items:center}
+.colombia-image img{width:100%;height:100%;object-fit:cover}
+.colombia-image.fit img{object-fit:contain;padding:12px}
+.colombia-image.art span{font-family:var(--head);font-size:clamp(24px,3vw,34px);font-weight:800;line-height:1.05;text-align:center;color:#000050;max-width:12ch;padding:24px}
+.colombia-card-body{padding:24px}
+.colombia-number{display:block;font-family:var(--head);font-size:13px;font-weight:800;color:var(--accent);margin-bottom:10px}
+.colombia-card h3{font-size:21px;font-weight:800}
+.colombia-card .tagline{color:var(--muted);font-size:14px;margin-top:9px}
+.colombia-card .btn{background:var(--navy)}
+.colombia-card .btn:hover{background:var(--blue)}
+.colombia-add{margin-top:24px;width:auto;padding:11px 18px;border:1px dashed var(--accent);border-radius:999px;background:transparent;color:var(--text);font:inherit;font-weight:700;cursor:pointer}
 
 /* ===== Detalle (modal) ===== */
 dialog#detail{border:0;padding:0;margin:auto;border-radius:28px;width:min(1080px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);background:var(--surface);color:var(--text);box-shadow:0 40px 120px rgba(0,0,40,.45);overflow:hidden}
@@ -222,7 +248,10 @@ html:has(dialog[open]){overflow:hidden}
 .end a:hover{background:#000050;color:#fff}
 
 /* ===== Responsive ===== */
-@media (max-width:1100px){.cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1100px){
+  .cols,.cols.cols-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .colombia-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media (max-width:860px){.brand-label{display:none}}
 @media (max-width:900px){
   .cover-inner,.split,.why,#quienes .split{grid-template-columns:1fr}
@@ -259,6 +288,9 @@ html:has(dialog[open]){overflow:hidden}
   .cover-card{padding:30px 24px 28px;border-radius:22px}
   .sec{padding:72px 0}
   .cols{grid-template-columns:1fr}
+  .cols.cols-1,.cols.cols-2,.cols.cols-3,.colombia-grid{grid-template-columns:1fr}
+  .colombia-head{align-items:flex-start;flex-direction:column}
+  .colombia-brand{width:150px;min-height:66px;padding:14px 18px}
   .facts li{grid-template-columns:1fr;gap:6px}
   .benefits{grid-template-columns:1fr}
   .why-text{padding:32px 24px}
@@ -319,7 +351,7 @@ dialog.editor-dialog::backdrop{background:rgba(0,0,40,.62);backdrop-filter:blur(
 .dialog-actions button{border:0;border-radius:999px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer}
 .dialog-cancel{background:var(--soft);color:var(--text)}
 .login-error{min-height:20px;color:#A51D3A;font-size:13px;margin-top:8px}
-body.is-editing .studies{padding-bottom:150px}
+body.is-editing .studies,body.is-editing .colombia{padding-bottom:150px}
 @media (max-width:620px){
   .sthead{align-items:flex-start}
   .edit-entry{position:absolute;right:0;top:0}
@@ -342,6 +374,7 @@ body.is-editing .studies{padding-bottom:150px}
       <a class="opt" href="#quienes">Quiénes somos</a>
       <a class="opt-sm" href="#escala">Escala</a>
       <a href="#panorama">Panorama</a>
+      <a class="opt" href="#colombia">Colombia</a>
       <a class="cta" href="#estudios">Estudios</a>
     </nav>
   </div>
@@ -362,7 +395,7 @@ body.is-editing .studies{padding-bottom:150px}
       <div class="cover-stats">
         <div><b>+20</b><span>años</span></div>
         <div><b>25</b><span>mercados</span></div>
-        <div><b>16</b><span>estudios</span></div>
+        <div><b>3</b><span>estudios</span></div>
       </div>
       <a class="btn-primary" href="#estudios">Explorar los estudios</a>
     </div>
@@ -470,7 +503,7 @@ body.is-editing .studies{padding-bottom:150px}
       <div>
         <p class="kicker">Nuestros estudios</p>
         <h2>Estudios de mercado</h2>
-        <p>Cuatro grupos, cada uno responde una pregunta de negocio. Abre un estudio para ver su resumen o entra al detalle completo.</p>
+        <p>Estos son los estudios que proponemos para BBVA. Abre un estudio para ver su resumen o entra al detalle completo.</p>
       </div>
       <button class="edit-entry" id="edit-entry" type="button" aria-label="Ingresar al editor">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
@@ -513,6 +546,24 @@ body.is-editing .studies{padding-bottom:150px}
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- ESTUDIOS PARA COLOMBIA -->
+<section class="sec colombia" id="colombia" hidden>
+  <div class="wrap">
+    <div class="colombia-head">
+      <div class="colombia-head-copy">
+        <p class="kicker">Hecho para Colombia</p>
+        <h2>Estudios hechos para el mercado de Colombia</h2>
+        <p class="sub">Investigaciones diseñadas para entender comportamientos, barreras y oportunidades en el mercado colombiano.</p>
+      </div>
+      <div class="colombia-brand" aria-label="BBVA">
+        <img src="/assets/colombia/bbva-logo.png" alt="BBVA">
+      </div>
+    </div>
+    <div class="colombia-grid" id="colombia-grid"></div>
+    <button class="colombia-add" id="colombia-add" type="button" data-add="" data-scope="colombia" hidden>+ Agregar estudio</button>
   </div>
 </section>
 
@@ -578,7 +629,7 @@ body.is-editing .studies{padding-bottom:150px}
       <label class="form-field">ID
         <input id="study-id" required maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="nombre-del-estudio">
       </label>
-      <label class="form-field">Categoría
+      <label class="form-field" id="study-category-field">Categoría
         <select id="study-category" required>
           <option value="0">Marca &amp; Campaña</option>
           <option value="1">Competencia &amp; Mercado</option>
@@ -690,7 +741,7 @@ body.is-editing .studies{padding-bottom:150px}
         if (a) { a.classList.add('is-active'); a.setAttribute('aria-current', 'true'); }
       });
     }, {rootMargin: '-45% 0px -50% 0px'});
-    ['inicio','quienes','escala','panorama','estudios'].forEach(function(id){ var el = document.getElementById(id); if (el) spy.observe(el); });
+    ['inicio','quienes','escala','panorama','estudios','colombia'].forEach(function(id){ var el = document.getElementById(id); if (el) spy.observe(el); });
   }
 
 })();

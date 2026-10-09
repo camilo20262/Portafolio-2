@@ -1,0 +1,167 @@
+[
+  {
+    "id": "habitos-efectivo",
+    "nombre": "Hábitos de uso del efectivo en Colombia",
+    "frase": "Propuesta de investigación · Estudio presencial con 1.500 encuestas en 4 ciudades.",
+    "puntos": [
+      "Propósito: entender hábitos, actitudes y barreras hacia el uso de plataformas digitales para realizar transacciones que reemplacen el efectivo.",
+      "Inversión: USD 33.591, antes de impuestos."
+    ],
+    "tiempos": [
+      "Cuestionario de 10 min"
+    ],
+    "etiquetas": [
+      "1.500 encuestas",
+      "4 ciudades",
+      "Margen de error 2,53%"
+    ],
+    "imagen": {
+      "ruta": "/assets/colombia/habitos-efectivo.webp",
+      "alt": "Mano sobre un tablero de indicadores digitales",
+      "ajuste": "cover"
+    },
+    "intro": "Entender hábitos, actitudes y barreras hacia el uso de plataformas digitales para realizar transacciones que reemplacen el efectivo.",
+    "secciones": [
+      {
+        "titulo": "Objetivo general",
+        "parrafo": "Identificar segmentos y caracterizar a las personas que usan dinero en efectivo en Colombia, entendiendo las barreras y motivadores del uso de efectivo.",
+        "lista": [],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Objetivos específicos",
+        "parrafo": "",
+        "lista": [
+          "Perfiles de usuarios: medios de pago más usados y preferidos, barreras percibidas en cada uno y atributos emocionales y de confianza (habilidad de uso, escepticismo, desconfianza, temor).",
+          "Barreras digitales: qué impide usar plataformas digitales para transaccionar.",
+          "Disposición al cambio: qué tan dispuestos están los usuarios de efectivo a pasarse a transacciones virtuales.",
+          "Medios ideales: cómo llegar a cada segmento encontrado."
+        ],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Metodología",
+        "parrafo": "",
+        "lista": [
+          "Público objetivo: personas que realizan transacciones con dinero físico frecuentemente, mayores de 18 años, NSE 3, 4 y 5.",
+          "Naturaleza: cuantitativa, concluyente no representativa.",
+          "Técnica: encuestas presenciales en sitios de alta afluencia del target, con muestreo por cuotas (ciudad, estrato y tipo de producto).",
+          "Muestra: 1.500 encuestas en Bogotá, Medellín, Cali y Barranquilla.",
+          "Instrumento: cuestionario estructurado de 10 minutos, definido entre agencia y cliente.",
+          "Margen de error: 2,53% con 95% de confianza."
+        ],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Escenario de inversión",
+        "parrafo": "Incluye coordinaciones previas, cuestionario, campo, incentivos, informe y presentación final.",
+        "lista": [
+          "No incluye impuestos. Valor en dólares calculado con la TRM del 9 de octubre de 2026 ($3.218,75).",
+          "Vigencia de la cotización: 30 días; la aprobación debe comunicarse por escrito.",
+          "Precio total y cerrado. Las demás condiciones están en la propuesta formal."
+        ],
+        "tipoLista": "ticks"
+      }
+    ],
+    "cronograma": [],
+    "datos": [
+      {
+        "nombre": "Inversión",
+        "valor": "USD 33.591"
+      },
+      {
+        "nombre": "Encuestas",
+        "valor": "1.500"
+      },
+      {
+        "nombre": "Ciudades",
+        "valor": "4"
+      },
+      {
+        "nombre": "Duración",
+        "valor": "10 min"
+      }
+    ]
+  },
+  {
+    "id": "habitos-usos-dinero",
+    "nombre": "Hábitos y usos del dinero en Colombia",
+    "frase": "Propuesta de investigación · Estudio presencial con 1.500 encuestas en 4 ciudades.",
+    "puntos": [
+      "Propósito: conocer las rutas que los usuarios realizan con su dinero desde que lo reciben y cómo lo gastan.",
+      "Inversión: USD 36.629, antes de impuestos."
+    ],
+    "tiempos": [
+      "Cuestionario de 15 min"
+    ],
+    "etiquetas": [
+      "1.500 encuestas",
+      "4 ciudades",
+      "Margen de error 2,53%"
+    ],
+    "imagen": null,
+    "intro": "Conocer las rutas que los usuarios realizan con su dinero desde que lo reciben y cómo lo gastan.",
+    "secciones": [
+      {
+        "titulo": "Objetivo general",
+        "parrafo": "Entender el proceso de uso y movimiento del dinero en Colombia.",
+        "lista": [],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Objetivos específicos",
+        "parrafo": "",
+        "lista": [
+          "Entidades: identificar qué entidades usa el target para manejar su dinero (bancos, billeteras digitales, neobancos, fintech), con sus percepciones, razones de uso, satisfacción y preferencia.",
+          "Drivers de elección: motivaciones, beneficios y barreras al elegir dónde recibir y administrar el dinero.",
+          "Canales: cómo se informan sobre las cuentas, por dónde abren productos, cómo prefieren ser contactados y qué canales usan para transaccionar.",
+          "Journey del dinero: las rutas que sigue el dinero en Colombia.",
+          "Significado de las cuentas: qué representan estos productos para los colombianos."
+        ],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Metodología",
+        "parrafo": "",
+        "lista": [
+          "Público objetivo: usuarios de bancos, billeteras digitales y neobancos, mayores de 18 años, NSE 3, 4 y 5.",
+          "Naturaleza: cuantitativa, concluyente no representativa.",
+          "Técnica: encuestas presenciales en sitios de alta afluencia del target, con muestreo por cuotas (ciudad, estrato y tipo de producto).",
+          "Muestra: 1.500 encuestas en Bogotá, Medellín, Cali y Barranquilla.",
+          "Instrumento: cuestionario estructurado de 15 minutos, definido entre agencia y cliente.",
+          "Margen de error: 2,53% con 95% de confianza."
+        ],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Escenario de inversión",
+        "parrafo": "Incluye coordinaciones previas, cuestionario, campo, incentivos, informe y presentación final.",
+        "lista": [
+          "No incluye impuestos. Valor en dólares calculado con la TRM del 9 de octubre de 2026 ($3.218,75).",
+          "Vigencia de la cotización: 30 días; la aprobación debe comunicarse por escrito.",
+          "Precio total y cerrado. Las demás condiciones están en la propuesta formal."
+        ],
+        "tipoLista": "ticks"
+      }
+    ],
+    "cronograma": [],
+    "datos": [
+      {
+        "nombre": "Inversión",
+        "valor": "USD 36.629"
+      },
+      {
+        "nombre": "Encuestas",
+        "valor": "1.500"
+      },
+      {
+        "nombre": "Ciudades",
+        "valor": "4"
+      },
+      {
+        "nombre": "Duración",
+        "valor": "15 min"
+      }
+    ]
+  }
+]

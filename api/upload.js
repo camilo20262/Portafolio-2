@@ -15,12 +15,17 @@ module.exports = async function upload(req, res) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || id.length > 80) {
       throw Object.assign(new Error('El ID del estudio no es válido.'), { status: 400 });
     }
+    var scope = String(req.headers['x-study-scope'] || 'studies');
+    if (scope !== 'studies' && scope !== 'colombia') {
+      throw Object.assign(new Error('La colección del estudio no es válida.'), { status: 400 });
+    }
     var bytes = await http.rawBody(req, validation.MAX_IMAGE + 1);
     var type = validation.validateImageBytes(bytes);
     var hash = crypto.createHash('sha256').update(bytes).digest('hex').slice(0, 12);
-    var path = '/assets/estudios/' + id + '-' + hash + '.' + type.ext;
+    var directory = scope === 'colombia' ? 'colombia' : 'estudios';
+    var path = '/assets/' + directory + '/' + id + '-' + hash + '.' + type.ext;
     var sha = await github.blob(bytes);
-    var token = sessions.uploadToken({ id: id, path: path, sha: sha });
+    var token = sessions.uploadToken({ id: id, scope: scope, path: path, sha: sha });
     http.send(res, 200, { path: path, sha: sha, token: token });
   } catch (error) { http.handleError(res, error); }
 };

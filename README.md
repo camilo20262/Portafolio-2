@@ -5,10 +5,11 @@ Página estática con un editor autenticado para crear, modificar, ordenar y eli
 ## Estructura
 
 - `index.html`: página pública, diálogos y controles del editor.
-- `data/estudios.json`: fuente ordenada de los estudios.
+- `data/estudios.json`: fuente ordenada del portafolio general.
+- `data/colombia.json`: estudios diseñados para el mercado colombiano.
 - `assets/js/studies-core.js`: render seguro y operaciones CRUD.
 - `assets/js/studies-app.js`: detalle público, sesión e interfaz de edición.
-- `assets/estudios/`: imágenes de los estudios.
+- `assets/estudios/` y `assets/colombia/`: imágenes de cada colección.
 - `assets/img/` y `assets/video/`: medios generales de la página.
 - `api/`: login, logout, sesión, carga de imágenes y publicación.
 - `tests/`: pruebas de migración, CRUD, autenticación, conflictos y archivos.
@@ -83,4 +84,4 @@ Las pruebas usan mocks para GitHub y nunca escriben en el repositorio remoto.
 - Las operaciones de escritura aceptan únicamente solicitudes del mismo origen.
 - El servidor valida todo el esquema, los IDs, longitudes y tipos reales de imagen; no confía en extensiones ni rutas nuevas enviadas por el navegador.
 - La publicación usa la API Git Data de GitHub: blobs, tree, commit y actualización no forzada de la rama. Si el SHA cambió, devuelve conflicto y no sobrescribe el trabajo ajeno.
-- `data/estudios.json` se sirve con `Cache-Control: no-cache, no-store, must-revalidate`.
+- `data/estudios.json` y `data/colombia.json` se sirven con `Cache-Control: no-cache, no-store, must-revalidate`.

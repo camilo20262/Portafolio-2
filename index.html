@@ -42,6 +42,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 .brand{display:flex;align-items:center;gap:20px;color:inherit;text-decoration:none;margin-right:auto;flex-shrink:0}
 .brand svg{height:30px;width:auto;flex-shrink:0;overflow:hidden}
 .brand-label{border-left:1px solid color-mix(in srgb,currentColor 35%,transparent);padding:6px 0 6px 20px;white-space:nowrap;font-family:var(--head);font-size:17px;font-weight:700;line-height:1}
+.client-brand{display:grid;place-items:center;height:30px;padding:5px 9px;border-radius:8px;background:#fff;box-shadow:0 4px 12px rgba(0,0,80,.12);flex-shrink:0}
+.client-brand img{width:auto;height:18px}
 .nav nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 .nav nav::-webkit-scrollbar{display:none}
 .nav nav a{color:inherit;text-decoration:none;font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;transition:background .2s}
@@ -225,7 +227,7 @@ html:has(dialog[open]){overflow:hidden}
 
 /* ===== Responsive ===== */
 @media (max-width:1100px){.cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:860px){.brand-label{display:none}}
+@media (max-width:1000px){.brand-label{display:none}}
 @media (max-width:900px){
   .cover-inner,.split,.why,#quienes .split{grid-template-columns:1fr}
   .pstats{grid-template-columns:1fr;gap:14px}
@@ -253,7 +255,10 @@ html:has(dialog[open]){overflow:hidden}
   html{scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
   .wrap{padding-left:20px;padding-right:20px}
   .nav .wrap{gap:10px;min-height:64px}
+  .brand{gap:10px}
   .brand svg{height:21px}
+  .client-brand{height:26px;padding:4px 7px}
+  .client-brand img{height:15px}
   .cover{margin-top:-65px;padding-top:65px}
   .nav nav{gap:2px}
   .nav nav a{padding:8px 10px;font-size:13px}
@@ -336,15 +341,15 @@ body.is-editing .studies{padding-bottom:150px}
 
 <header class="nav is-solid">
   <div class="wrap">
-    <a class="brand" href="#inicio" aria-label="WPP Media Business Intelligence, ir al inicio">
+    <a class="brand" href="#inicio" aria-label="WPP Media Business Intelligence y BBVA, ir al inicio">
       <svg viewBox="18.5 18.5 192.64 30.06" aria-hidden="true"><use href="#wppm" x="0" y="0" width="229.641" height="67.2626"></use></svg>
       <span class="brand-label">Business Intelligence</span>
+      <span class="client-brand"><img src="/assets/colombia/bbva-logo.png" alt="BBVA"></span>
     </a>
     <nav aria-label="Secciones">
       <a class="opt" href="#quienes">Quiénes somos</a>
       <a class="opt-sm" href="#escala">Escala</a>
-      <a href="#panorama">Panorama</a>
-      <a class="opt" href="#colombia">Colombia</a>
+      <a class="opt-sm" href="#panorama">Panorama</a>
       <a class="cta" href="#estudios">Estudios</a>
     </nav>
   </div>
@@ -703,7 +708,7 @@ body.is-editing .studies{padding-bottom:150px}
         if (a) { a.classList.add('is-active'); a.setAttribute('aria-current', 'true'); }
       });
     }, {rootMargin: '-45% 0px -50% 0px'});
-    ['inicio','quienes','escala','panorama','estudios','colombia'].forEach(function(id){ var el = document.getElementById(id); if (el) spy.observe(el); });
+    ['inicio','quienes','escala','panorama','estudios'].forEach(function(id){ var el = document.getElementById(id); if (el) spy.observe(el); });
   }
 
 })();

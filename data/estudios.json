@@ -145,13 +145,42 @@
     "id": "mmm",
     "categoria": 0,
     "nombre": "MMM · Marketing Mix Modeling",
-    "frase": "Mide cuánto aporta cada medio a los resultados del negocio para optimizar la inversión.",
+    "frase": "Análisis cuantitativo de datos históricos que determina el impacto directo y la contribución de las actividades de marketing a una variable objetivo clave, generalmente las ventas.",
     "puntos": [],
     "tiempos": [],
     "etiquetas": [],
     "imagen": null,
-    "intro": "",
-    "secciones": [],
+    "intro": "Para aislar el impacto de cada variable, analizamos simultáneamente todos los factores internos y externos que influyen en las ventas finales de la marca.",
+    "secciones": [
+      {
+        "titulo": "Marketing Impact & ROI Analysis",
+        "parrafo": "",
+        "lista": [
+          "Retorno de la inversión (ROI) por canal de medios y campaña (cómo se ha capitalizado la inversión en comunicación).",
+          "Efectos «paraguas» y «halo» entre campañas.",
+          "Contribución a las ventas derivada de precios, distribución, canales de medios y activaciones especiales.",
+          "Efecto de la fuerza de ventas.",
+          "Ventas base (sin comunicación).",
+          "Efecto precio.",
+          "Influencia de la comunicación de la competencia.",
+          "Duración, creatividad, semanas de emisión y niveles de impresiones/TRP que optimizan la comunicación en medios."
+        ],
+        "tipoLista": "ticks"
+      },
+      {
+        "titulo": "Esta información le permite:",
+        "parrafo": "",
+        "lista": [
+          "Asignar presupuestos de manera más eficiente entre la cartera de productos",
+          "Ajustar los presupuestos de medios en función de los objetivos de crecimiento",
+          "Detectar oportunidades para redistribuir el presupuesto de marketing y maximizar el impacto en las ventas",
+          "Identificar las campañas más eficaces y extraer conclusiones clave",
+          "Optimizar la distribución de la comunicación a lo largo del año, logrando niveles de presencia efectivos",
+          "Apoyar el desarrollo de la estrategia a largo plazo de la marca"
+        ],
+        "tipoLista": "steps"
+      }
+    ],
     "cronograma": [],
     "datos": []
   }

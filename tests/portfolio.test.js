@@ -64,14 +64,10 @@ test('estudios.json contiene solo los tres estudios pedidos en Marca & Campaña'
   assert.deepEqual(studies.map(function (study) { return study.categoria; }), [0, 0, 0]);
   assert.equal(studies[0].nombre, 'Media BI Lift');
   assert.equal(studies[1].nombre, 'Preview · Starview');
-  assert.deepEqual(studies[2], {
-    id: 'mmm',
-    categoria: 0,
-    nombre: 'MMM · Marketing Mix Modeling',
-    frase: 'Mide cuánto aporta cada medio a los resultados del negocio para optimizar la inversión.',
-    puntos: [], tiempos: [], etiquetas: [], imagen: null, intro: '', secciones: [], cronograma: [], datos: []
-  });
-  assert.doesNotMatch(core.buildStudy(studies[2], false), /data-open/);
+  assert.equal(studies[2].nombre, 'MMM · Marketing Mix Modeling');
+  assert.equal(studies[2].secciones.length, 2);
+  assert.match(studies[2].intro, /aislar el impacto de cada variable/);
+  assert.match(core.buildStudy(studies[2], false), /data-open/);
 });
 
 test('las categorías vacías se ocultan en público y aparecen en edición', function () {
@@ -119,11 +115,30 @@ test('crear, editar, reordenar y eliminar estudios de Colombia conserva un arreg
   assert.equal(removed.some(function (item) { return 'categoria' in item; }), false);
 });
 
-test('Colombia está dentro de .cols y ya no existe como sección aparte', function () {
+test('el editor enruta el CRUD de la columna Colombia sin mostrar categoría', function () {
+  var colombia = readJson('data/colombia.json');
+  var card = core.buildColombiaStudy(colombia[0], 0, true);
+  var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
+
+  assert.match(card, /data-edit="habitos-efectivo" data-scope="colombia"/);
+  assert.match(card, /data-move="-1"[^>]+data-scope="colombia"/);
+  assert.match(card, /data-move="1"[^>]+data-scope="colombia"/);
+  assert.match(card, /data-delete="habitos-efectivo" data-scope="colombia"/);
+  assert.match(app, /data-scope="colombia">\+ Agregar estudio<\/button>/);
+  assert.match(app, /categoryField\.hidden = formScope === 'colombia'/);
+  assert.match(app, /study-category'\)\.required = formScope !== 'colombia'/);
+  assert.match(app, /if \(formScope !== 'colombia'\) study\.categoria/);
+  assert.match(app, /moveScope === 'colombia'\) colombiaState = core\.moveStudy/);
+  assert.match(app, /removeScope === 'colombia'\) colombiaState = core\.deleteStudy/);
+});
+
+test('Colombia está dentro de .cols, sin enlace propio en el menú ni sección aparte', function () {
   var html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   assert.match(html, /<title>Propuesta BBVA · WPP Media<\/title>/);
+  assert.match(html, /aria-label="WPP Media Business Intelligence y BBVA, ir al inicio"/);
   assert.match(html, /Estos son los estudios que proponemos para BBVA y los que hemos hecho para el mercado colombiano\. Abre un estudio para ver su resumen o entra al detalle completo\./);
-  assert.match(html, /href="#colombia">Colombia<\/a>/);
+  assert.doesNotMatch(html, /href="#colombia">Colombia<\/a>/);
+  assert.match(html, /class="client-brand"><img[^>]+bbva-logo\.png" alt="BBVA">/);
   assert.match(html, /<div class="col" id="colombia" style="--c:#00DBEE" hidden>/);
   assert.match(html, /Estudios hechos para el mercado colombiano/);
   assert.match(html, /class="colombia-logo"[^>]+bbva-logo\.png/);
@@ -160,6 +175,7 @@ test('el orden del detalle incluye los estudios de Colombia después de los estu
   assert.deepEqual(detailedIds, [
     'estudio-lift',
     'estudio-preview-starview',
+    'estudio-mmm',
     'colombia-estudio-habitos-efectivo',
     'colombia-estudio-habitos-usos-dinero'
   ]);
@@ -167,6 +183,12 @@ test('el orden del detalle incluye los estudios de Colombia después de los estu
   var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
   assert.match(app, /querySelectorAll\('\[data-detail-study\]\[data-has-detail="true"\]'\)/);
   assert.match(app, /activeDetail = \(index \+ studies\.length\) % studies\.length/);
+});
+
+test('el contador de portada usa solo estudios.json', function () {
+  var app = fs.readFileSync(path.join(root, 'assets/js/studies-app.js'), 'utf8');
+  assert.match(app, /count\.textContent = String\(state\.length\)/);
+  assert.doesNotMatch(app, /count\.textContent = String\(state\.length \+ colombiaState\.length\)/);
 });
 
 test('la validación acepta colombia.json y rechaza categoría o rutas de otra colección', function () {
